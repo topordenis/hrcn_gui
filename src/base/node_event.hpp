@@ -1,5 +1,6 @@
 #pragma once
-#include <blend2d.h>
+#include <base/point.hpp>
+
 /*
 onclick	The user clicks on an element
 oncontextmenu	The user right-clicks on an element
@@ -23,7 +24,7 @@ public:
     e_node_event_type type;
     c_node *target;
 
-    BLPoint position;
+    c_point position;
 
 
 

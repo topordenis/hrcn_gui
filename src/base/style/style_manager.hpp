@@ -1,25 +1,9 @@
 #pragma once
-#include <Yoga/Yoga.h>
-#include <blend2d.h>
-
+#include <Yoga.h>
+#include <iostream>
 #include <base/style/color.hpp>
 #include <array>
-#include <base/yg_enums.hpp>
-
-/*
-YOGA ABSTRACTION
-*/
-
-enum class e_edge : uint8_t;
-enum class e_position : uint8_t;
-enum class e_align : uint8_t;
-enum class e_justify : uint8_t;
-enum class e_flex_direction : uint8_t;
-enum class e_display : uint8_t;
-enum class e_gutter : uint8_t;
-enum class e_wrap : uint8_t;
-enum class e_corner : uint8_t;
-
+#include <base/yg_enums.hpp> 
 class c_node;
 
 

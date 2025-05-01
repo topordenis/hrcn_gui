@@ -1,5 +1,7 @@
 #pragma once
 #include <yoga/Yoga.h>
+#include <iostream>
+#include <cstdint> 
 enum class e_flex_direction : uint8_t
 {
   column = YGFlexDirectionColumn,
@@ -65,7 +67,6 @@ enum class e_position : uint8_t
   position_type_static = YGPositionTypeStatic,
   position_type_relative = YGPositionTypeRelative,
   position_type_absolute = YGPositionTypeAbsolute,
-
 };
 
 

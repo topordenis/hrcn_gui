@@ -4,7 +4,7 @@
 #include <base/style/color.hpp>
 class c_node;
 class c_transition;
-enum class e_edge : uint8_t;
+#include <base/yg_enums.hpp>
 
 
 class c_transitions_manager

@@ -2,10 +2,11 @@
 // Created by Denis Topor on 01.07.2024.
 //
 
-#include "input_context.hpp"
+
 #include <iostream>
 
 #include <base/app_context.hpp>
+#include "input_context.hpp"
 
 #include "mouse_event.hpp"
 #include <base/event_listener.hpp>
@@ -21,6 +22,7 @@
 #include <base/events/key_down_event.hpp>
 #include <base/events/key_up_event.hpp>
 
+
 c_input_context::c_input_context()
 {
   
@@ -31,7 +33,7 @@ c_input_context::~c_input_context()
 
 void c_input_context::cursor_callback(int x, int y)
 {
-    cursor = BLPointI(x, y);
+    cursor = c_point(x, y);
 
     auto ev = new c_mouse_move_event();
     ev->position = cursor;
@@ -118,6 +120,6 @@ void c_input_context::scroll_callback(float offsetX, float offsetY)
     event->offset.x = offsetX;
     event->offset.y = offsetY;
 
-    event->position = cursor;
+    event->position = this->cursor;
     c_app_context::get_current()->push_event(event);
 }

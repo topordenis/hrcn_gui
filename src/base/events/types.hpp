@@ -1,6 +1,5 @@
 #pragma once
-#include <iostream>
-
+#include <cstdint>
 
 enum class e_node_event_type : uint8_t {
    min,

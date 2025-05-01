@@ -1,7 +1,7 @@
 #pragma once
 #include "transition.hpp"
 
-enum class e_edge : uint8_t;
+#include <base/yg_enums.hpp>
 class c_node;
 
 class c_transition_position : public c_transition {

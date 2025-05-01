@@ -26,53 +26,54 @@ void c_text::set_string(runtime_secure_string string)
     mark_layout_as_dirty();
 }
 
-void c_text::render(BLContext &context)
+void c_text::render(c_render_context &context)
 {
     c_node::render(context);
 
-    if (!_font)
-        return;
+ //   context.text()
+    // if (!_font)
+    //     return;
 
-    if (!_string.has_value())
-        return;
+    // if (!_string.has_value())
+    //     return;
 
-    int y = box.y;
+    // int y = box.y;
 
-    auto &blend2d_font = _font->get();
+    // auto &blend2d_font = _font->get();
 
-    auto &s = _string.value();
-    BLGlyphBuffer gb;
-    BLGlyphRun gn;
-    char raw[128];
-    s.access_string(raw);
-    gb.setUtf8Text((const char *)(&raw[0]));
+    // auto &s = _string.value();
+    // BLGlyphBuffer gb;
+    // BLGlyphRun gn;
+    // char raw[128];
+    // s.access_string(raw);
+    // gb.setUtf8Text((const char *)(&raw[0]));
 
-    blend2d_font.shape(gb);
-    BLTextMetrics tm;
-    BLFontMetrics fm = blend2d_font.metrics();
+    // blend2d_font.shape(gb);
+    // BLTextMetrics tm;
+    // BLFontMetrics fm = blend2d_font.metrics();
 
-    blend2d_font.getTextMetrics(gb, tm);
-
-
-
-
-    BLImage t(box.w, box.h, BL_FORMAT_PRGB32);
+    // blend2d_font.getTextMetrics(gb, tm);
 
 
 
 
-    context.fillGlyphRun(BLPoint(box.x, box.y + fm.capHeight),
-                         blend2d_font, gb.glyphRun(), BLRgba32(_style->_color.getR(), _style->_color.getG(), _style->_color.getB(), _style->_color.getA()));
+    // // BLImage t(box.w, box.h, BL_FORMAT_PRGB32);
+
+
+
+
+    // context.fillGlyphRun(BLPoint(box.x, box.y + fm.capHeight),
+    //                      blend2d_font, gb.glyphRun(), BLRgba32(_style->_color.getR(), _style->_color.getG(), _style->_color.getB(), _style->_color.getA()));
 
 
 
 
 
-    memset((void *)(&raw[0]), 0, 128);
-    // raw[127] = '0/';
+    // memset((void *)(&raw[0]), 0, 128);
+    // // raw[127] = '0/';
 
-    gb.setUtf8Text((const char *)(&raw[0]));
-    gb.clear();
+    // gb.setUtf8Text((const char *)(&raw[0]));
+    // gb.clear();
 
     // y += fm.ascent + fm.descent + fm.lineGap;
 }
@@ -84,7 +85,8 @@ YGSize c_text::measure(YGNodeConstRef node,
                        YGMeasureMode heightMode)
 {
 
-    std::cout << "c_text::measure called" << std::endl;
+
+   /* std::cout << "c_text::measure called" << std::endl;
     auto item = reinterpret_cast<c_text *>(YGNodeGetContext(node));
 
     auto &font = item->_font->get();
@@ -96,13 +98,14 @@ YGSize c_text::measure(YGNodeConstRef node,
     }
     auto &s = item->_string.value();
 
-    BLGlyphBuffer gb;
-    BLGlyphRun gn;
+    // BLGlyphBuffer gb;
+    // BLGlyphRun gn;
     char raw[128];
     s.access_string(raw);
     gb.setUtf8Text((const char *)(&raw[0]));
 
     font.shape(gb);
+
     BLTextMetrics tm;
     BLFontMetrics fm = font.metrics();
 
@@ -115,8 +118,8 @@ YGSize c_text::measure(YGNodeConstRef node,
 
     float w = (tm.boundingBox.x1 - tm.boundingBox.x0);
     float h = fm.capHeight;
-
-    YGSize size{w, h};
+*/
+    YGSize size{0.f, 0.f};
 
     return size;
 }

@@ -14,7 +14,7 @@ void c_transition::run()
         return;
     _has_run = false;
 
-    auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _start);
+    auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - _start);
 
     auto elapsed = (float)elapsed_time.count();
 

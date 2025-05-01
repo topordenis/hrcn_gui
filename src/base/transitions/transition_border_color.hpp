@@ -2,7 +2,7 @@
 #include "transition.hpp"
 #include <base/style/color.hpp>
 
-enum class e_edge : uint8_t;
+#include <base/yg_enums.hpp>
 class c_node;
 
 class c_transition_border_color : public c_transition

@@ -21,21 +21,18 @@
 #include <utils/path_generator.hpp>
 
 #include "font.hpp"
-#include "blend2d/pipeline/pipedefs_p.h"
+
 #include "events/mouse_scroll_event.hpp"
 #include <numbers>
-
 
 static int idx = 0;
 c_node::c_node(/* args */)
 {
-    node_ref = (c_node_ref*)YGNodeNew();
-
+    node_ref = (c_node_ref *)YGNodeNew();
 
     _style = new c_style_manager(this);
     _transitions = new c_transitions_manager(this);
     _pending = new c_pending_state(this);
-
 
     //   YGNodeStyleSetPositionType(node_ref, YGPositionTypeRelative);
     YGNodeSetAlwaysFormsContainingBlock((YGNodeRef)node_ref, true /*alwaysFormsContainingBlock*/);
@@ -63,7 +60,6 @@ void c_node::clear()
 void c_node::destroy()
 {
 
-
     if (app_context == nullptr)
     {
         std::cout << "c_node::destroy() app_context is null " << std::endl;
@@ -71,8 +67,6 @@ void c_node::destroy()
     }
 
     app_context->remove_event_listeners_for_node(this);
-
-
 
     for (unsigned int i = 0; i < children.size(); i++)
         children[i]->destroy();
@@ -110,28 +104,28 @@ void c_node::use_effect(std::function<void()> _callback, std::vector<c_state *> 
     _pending->add_effect(this, effect);
 }
 
-void c_node::sync_context() {
-
-
-
+void c_node::sync_context()
+{
 }
 void c_node::check_for_state_changes()
 {
 }
 
-void c_pending_state::add_event_listener(c_node *node, c_event_listener *listener) {
+void c_pending_state::add_event_listener(c_node *node, c_event_listener *listener)
+{
     _event_listeners.push_back(listener);
 }
-void c_pending_state::add_effect(c_node* node, c_effect* effect) {
+void c_pending_state::add_effect(c_node *node, c_effect *effect)
+{
     this->_effects.push_back(effect);
 }
-void c_pending_state::add_state(c_state* state) {
+void c_pending_state::add_state(c_state *state)
+{
     this->_states.push_back(state);
 }
 c_event_listener *c_node::add_event_listener(e_node_event_type type, std::function<void(c_node_event *)> _fn)
 {
     c_event_listener *listener = new c_event_listener(type, this, _fn);
-
 
     if (app_context)
         app_context->add_event_listener(this, listener);
@@ -141,64 +135,26 @@ c_event_listener *c_node::add_event_listener(e_node_event_type type, std::functi
 }
 void c_node::remove_event_listener(c_event_listener *_event_listener)
 {
-   app_context->remove_event_listener(_event_listener);
+    app_context->remove_event_listener(_event_listener);
 }
 
-float deg2rad(float degrees) {
+float deg2rad(float degrees)
+{
     double radians = degrees * (std::numbers::pi_v<double> / 180.0);
-    return  radians;
+    return radians;
 }
 
-bool c_node::have_rounded_borders() {
-    for(auto& border : _style->_border_corners)
+bool c_node::have_rounded_borders()
+{
+    for (auto &border : _style->_border_corners)
         if (border.radius > 0.f)
             return true;
 
-   return  false;
+    return false;
 }
-BLImage tampenie(int w, int h) {
 
-
-    // create the main BLContext
-    BLImage img(w, h, BL_FORMAT_PRGB32);
-    BLContext ctx(img);
-    ctx.clearAll();
-    ctx.setFillStyle(BLRgba32(0,255,255,100));
-    ctx.fillRect(BLRect(0,0, w, h));
-    ctx.setTransform( {1,0,0,1, w * 0.5,h * 0.5} ); //put the origin at the center of img
-
-
-    ctx.fillCircle(0,0,90);
-    ctx.setFillStyle(BLRgba32(255,0,0,255));
-    ctx.fillTriangle(-w * 0.5,-h * 0.5, 0, 0, -w * 0.5, h * 0.5 );
-    ctx.setFillStyle(BLRgba32(0,255,0,255));
-    ctx.fillTriangle(w * 0.5,-h * 0.5, 0, 0, w * 0.5, h * 0.5);
-    ctx.setFillStyle(BLRgba32(0,0,255,255));
-    ctx.fillTriangle(-w * 0.5,-h * 0.5, 0, 0, w * 0.5, -h * 0.5 );
-
-    ctx.fillTriangle(-w * 0.5,h * 0.5, 0, 0, w * 0.5, h * 0.5 );
-    ctx.end();
-
-    return img;
-}
-double distanceBetweenTwoPoints( BLPoint a, BLPoint b)  {
-    double dx = b.x - a.x;
-    double dy = b.y - a.y;
-    return std::sqrt(dx * dx + dy * dy);
-}
-float angleBetweenTwoPoints(BLPoint a, BLPoint b) {
-  BLPoint dif = a - b;
-
-    float theta = std::atan2f(dif.y, dif.x); // range (-PI, PI]
-    return theta;
-}
-BLPoint generatePoint(BLPoint base,float angle, float distance) {
-    double newX = base.x + distance * std::cos(angle);
-    double newY = base.y + distance * std::sin(angle);
-
-    return BLPoint(newX,newY);
-}
-void c_node::render(BLContext &context) {
+void c_node::render(c_render_context &context)
+{
     if (parent && YGNodeLayoutGetHadOverflow((YGNodeRef)parent->node_ref))
     {
         auto parent_box = parent->box;
@@ -207,42 +163,30 @@ void c_node::render(BLContext &context) {
     }
     bool restore_clipping = false;
 
-    context.setFillStyle(BLRgba32(_style->_background_color.getR(),_style->_background_color.getG(),_style->_background_color.getB(),_style->_background_color.getA()));
-    context.fillRect(BLRectI((int)box.x, (int)box.y, (int)box.w, (int)box.h));
-
+    context.rect(box, _style->_background_color);
     if (overflow_y && _style->_overflow_hidden)
-        context.clipToRect(box);
+        context.clip(box);
 
-    for (auto &child : children) {
+    for (auto &child : children)
+    {
         if (child->style().get_z_index() == 0)
             child->render(context);
     }
 
     if (overflow_y && _style->_overflow_hidden)
-        context.restoreClipping();
+        context.restore();
 
-    auto& border_top = _style->_borders.at((uint8_t)e_edge::top);
-    auto& border_bottom = _style->_borders.at((uint8_t)e_edge::bottom);
-    auto& border_left =  _style->_borders.at((uint8_t)e_edge::left);
-    auto& border_right =  _style->_borders.at((uint8_t)e_edge::right);
+    auto &border_top = _style->_borders.at((uint8_t)e_edge::top);
+    auto &border_bottom = _style->_borders.at((uint8_t)e_edge::bottom);
+    auto &border_left = _style->_borders.at((uint8_t)e_edge::left);
+    auto &border_right = _style->_borders.at((uint8_t)e_edge::right);
 
-   context.setFillStyle(BLRgba32(border_top.color.getR(), border_top.color.getG(), border_top.color.getB(), border_top.color.getA()));
-    context.fillRect(BLRectI(box.x, box.y, box.w, border_top.value));
-
-    context.setFillStyle(BLRgba32(border_bottom.color.getR(), border_bottom.color.getG(), border_bottom.color.getB(), border_bottom.color.getA()));
-   context.fillRect(BLRectI(box.x, box.y, border_bottom.value, box.h));
-
-    context.setFillStyle(BLRgba32(border_left.color.getR(), border_left.color.getG(), border_left.color.getB(), border_left.color.getA()));
-    //context.strokeRect(box);
-    context.fillRect(BLRectI(box.x + box.w - border_left.value, box.y, border_left.value, box.h - border_bottom.value));
-
-    context.setFillStyle(BLRgba32(border_right.color.getR(), border_right.color.getG(), border_right.color.getB(), border_right.color.getA()));
-
-    context.fillRect(BLRectI(box.x, box.y + box.h - border_right.value , box.w, border_right.value));
+    context.rect(c_rect(box.x, box.y, box.w, border_top.value), border_top.color);
+    context.rect(c_rect(box.x, box.y, border_bottom.value, box.h), border_bottom.color);
+    context.rect(c_rect(box.x + box.w - border_left.value, box.y, border_left.value, box.h - border_bottom.value),border_left.color);
+    context.rect(c_rect(box.x, box.y + box.h - border_right.value, box.w, border_right.value), border_right.color);
 
     dirty = false;
-
-
 }
 bool c_node::absolute_anchestor(int &z_index)
 {
@@ -251,11 +195,11 @@ bool c_node::absolute_anchestor(int &z_index)
     int highest = 0;
     while (current != nullptr)
     {
-            if (current->_style->get_z_index() >= highest)
-            {
-                z_index = current->_style->get_z_index();
-                highest = z_index;
-            }
+        if (current->_style->get_z_index() >= highest)
+        {
+            z_index = current->_style->get_z_index();
+            highest = z_index;
+        }
         current = current->parent;
     }
     if (highest > 0)
@@ -263,7 +207,7 @@ bool c_node::absolute_anchestor(int &z_index)
     return false;
 }
 
-void c_node::layout_update(BLPointI point)
+void c_node::layout_update(c_point point)
 {
     if (!node_ref)
         return;
@@ -271,13 +215,13 @@ void c_node::layout_update(BLPointI point)
     if (parent && app_context == nullptr)
         app_context = parent->app_context;
 
-    if (app_context == nullptr) {
+    if (app_context == nullptr)
+    {
         assert("App context is null in layout update.");
         return;
     }
 
-
-    const auto layout_width =  YGNodeLayoutGetWidth((YGNodeRef)node_ref);
+    const auto layout_width = YGNodeLayoutGetWidth((YGNodeRef)node_ref);
     const auto layout_height = YGNodeLayoutGetHeight((YGNodeRef)node_ref);
 
     box.x = point.x + YGNodeLayoutGetLeft((YGNodeRef)node_ref);
@@ -285,15 +229,10 @@ void c_node::layout_update(BLPointI point)
     box.w = layout_width;
     box.h = layout_height;
 
-
     static_box = box;
 
-
-
     for (auto &child : children)
-        child->layout_update(BLPointI(box.x, box.y - scroll * (content_box.h)));
-
-
+        child->layout_update(c_point(box.x, box.y - scroll * (content_box.h)));
 
     content_box = calculate_bounding_box_of_children();
 
@@ -323,28 +262,28 @@ void c_node::layout_update(BLPointI point)
                                                              scroll = std::clamp(scroll, 0.f, 1.f - max_scroll);
 
                                                              std::cout << " scroll " << scroll << std::endl;
-                                                             mark_layout_as_dirty();
-                                                         });
+                                                             mark_layout_as_dirty(); });
 
-    if (app_context && !_init && _on_init) {
+    if (app_context && !_init && _on_init)
+    {
         _on_init();
         _init = true;
     }
 }
 
-BLRect c_node::calculate_bounding_box_of_children()
+c_rect c_node::calculate_bounding_box_of_children()
 {
     if (children.empty())
     {
-        return BLRect{0, 0, 0, 0}; // No children, return an empty box
+        return c_rect{0, 0, 0, 0}; // No children, return an empty box
     }
 
     // Initialize with the first child's bounding box
     auto first_child_box = children.front()->calc_total_size();
-    double min_x = first_child_box.x;
-    double min_y = first_child_box.y;
-    double max_x = first_child_box.x + first_child_box.w;
-    double max_y = first_child_box.y + first_child_box.h;
+    float min_x = first_child_box.x;
+    float min_y = first_child_box.y;
+    float max_x = first_child_box.x + first_child_box.w;
+    float max_y = first_child_box.y + first_child_box.h;
 
     // Iterate over all children and adjust the bounding box
     for (const auto &child : children)
@@ -364,23 +303,7 @@ BLRect c_node::calculate_bounding_box_of_children()
     }
 
     // Return the calculated bounding box
-    return BLRect{min_x, min_y, max_x - min_x, max_y - min_y};
-}
-
-BLSize c_node::content_size()
-{
-    if (children.empty())
-        return BLSize{0.f, 0.f};
-    if (children.size() < 2)
-    {
-        auto size = children.back()->calc_total_size();
-        return BLSize{size.w, size.h};
-    }
-
-    auto front = children.front()->calc_total_size();
-    auto back = children.back()->calc_total_size();
-
-    return BLSize{back.x + back.w - front.x, back.y + back.h - front.y};
+    return c_rect{min_x, min_y, max_x - min_x, max_y - min_y};
 }
 
 void c_node::add_child(c_node *node)
@@ -393,15 +316,15 @@ void c_node::add_child(c_node *node)
 
     mark_layout_as_dirty();
 
-    c_node* current = this;
+    c_node *current = this;
 
-    while (current != nullptr) {
+    while (current != nullptr)
+    {
         if (current->is_root)
             current->propagate_context(current->app_context);
 
         current = current->parent;
     }
-
 }
 void c_node::remove_child(c_node *node)
 {
@@ -414,42 +337,35 @@ void c_node::remove_child(c_node *node)
     mark_layout_as_dirty();
 }
 
-
-void c_node::propagate_context(c_app_context* context)
+void c_node::propagate_context(c_app_context *context)
 {
 
-    if (is_root) {
+    if (is_root)
+    {
         app_context->_nodes.clear();
     }
 
-
-
     app_context = context;
-
 
     app_context->_nodes.push_back(this);
 
-    if (app_context) {
+    if (app_context)
+    {
         if (!_pending->is_consumed())
             _pending->consume();
     }
-
 
     assert(context);
 
     for (auto &child : children)
         child->propagate_context(context);
 
-
-
-    if (is_root) {
-       // std::reverse(app_context->_nodes.begin(), app_context->_nodes.end());
+    if (is_root)
+    {
+        // std::reverse(app_context->_nodes.begin(), app_context->_nodes.end());
         for (int i = 0; i < app_context->_nodes.size(); ++i)
             app_context->_nodes.at(i)->global_index = i;
-
-
     }
-
 }
 void c_node::handle_event(c_node_event *event)
 {
@@ -495,7 +411,7 @@ void c_node::handle_event(c_node_event *event)
 
            std::cout << " scroll " << scroll << std::endl;
            for (auto &child: children)
-               child->layout_update(BLPointI(box.x, box.y - scroll * (content_box.h)));
+               child->layout_update(c_point(box.x, box.y - scroll * (content_box.h)));
 
            content_box = calculate_bounding_box_of_children();
 
@@ -535,7 +451,6 @@ bool c_node::require_rerender(bool &_dirty_layout)
     auto d = this;
     bool drty = false;
 
-
     for (c_node *node : app_context->_nodes)
     {
 
@@ -550,15 +465,15 @@ bool c_node::require_rerender(bool &_dirty_layout)
     return drty;
 }
 
-BLRect c_node::calc_total_size()
+c_rect c_node::calc_total_size()
 {
     if (node_ref == nullptr)
-        return BLRect{};
+        return c_rect{};
 
     if (style().get_position() == e_position::position_type_absolute)
-        return BLRect{};
+        return c_rect{};
 
-    BLRect original = box;
+    c_rect original = box;
 
     original.w += YGNodeLayoutGetMargin((YGNodeRef)node_ref, YGEdgeLeft) + YGNodeLayoutGetMargin((YGNodeRef)node_ref, YGEdgeRight);
     original.h += YGNodeLayoutGetMargin((YGNodeRef)node_ref, YGEdgeTop) + YGNodeLayoutGetMargin((YGNodeRef)node_ref, YGEdgeBottom) +
@@ -572,21 +487,23 @@ c_transitions_manager &c_node::transitions(int ms)
     _transitions->milliseconds = ms;
     return *_transitions;
 }
-void c_pending_state::consume() {
+void c_pending_state::consume()
+{
 
-    for (auto& event_listener : _event_listeners)
+    for (auto &event_listener : _event_listeners)
         _node->app_context->add_event_listener(_node, event_listener);
 
-    for(auto& effect : _effects) {
-        for(auto& state: effect->states) {
+    for (auto &effect : _effects)
+    {
+        for (auto &state : effect->states)
+        {
             _node->app_context->add_state(state);
-            if (std::find_if(state->_effects.begin(), state->_effects.end(), [effect](c_effect* _eff) {
-                return _eff == effect;
-            }) == state->_effects.end()) {
+            if (std::find_if(state->_effects.begin(), state->_effects.end(), [effect](c_effect *_eff)
+                             { return _eff == effect; }) == state->_effects.end())
+            {
                 state->_effects.push_back(effect);
             }
         }
-
     }
 
     _node->app_context->add_node(_node);
@@ -595,4 +512,3 @@ void c_pending_state::consume() {
     _event_listeners.clear();
     _consumed = true;
 }
-

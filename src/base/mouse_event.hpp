@@ -1,8 +1,6 @@
 #pragma once
 #include <cstdint>
-
 #include "node_event.hpp"
-#include "blend2d/geometry.h"
 
 enum class e_mouse_event_type : uint8_t {
     min,
@@ -20,7 +18,7 @@ enum class e_mouse_event_type : uint8_t {
 class c_mouse_event : public c_node_event {
 public:
     e_mouse_event_type mouse_event_type;
-    BLPointI position;
+    c_point position;
 
     bool consumed = false;
 

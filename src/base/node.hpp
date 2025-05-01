@@ -1,7 +1,12 @@
 #pragma once
 #include <cassert>
 #include <yoga/Yoga.h>
-#include <blend2d.h>
+#include <base/point.hpp>
+#include <base/rect.hpp>
+#include <base/style/color.hpp>
+#include <base/render_context.hpp>
+
+
 #include <vector>
 #include <functional>
 #include "node_event.hpp"
@@ -74,13 +79,11 @@ public:
     }
 
 
-    std::array<BLPath, 4> _border_paths;
 
    inline static c_font* default_font = nullptr;
     bool have_rounded_borders() ;
     std::string debug_obj_descriptor;
 
-    BLPath round_rect;
 
     void set_debug_descriptor(std::string s) {
         debug_obj_descriptor = s;
@@ -96,7 +99,7 @@ public:
 
     bool mouse_hover = false;
 
-    virtual void render(BLContext &context);
+    virtual void render(c_render_context &context);
 
     c_event_listener* scroll_listener = nullptr;
 
@@ -141,7 +144,7 @@ public:
 
     
 
-    virtual void layout_update(BLPointI point);
+    virtual void layout_update(c_point point);
 
     virtual void add_child(c_node *node);
 
@@ -151,11 +154,9 @@ public:
 
     void handle_event(c_node_event *event);
     void safe_destroy();
-    BLRect calc_total_size();
+    c_rect calc_total_size();
 
-    BLSize content_size();
-
-    BLRect _content;
+    c_rect _content;
 
     void destroy();
 
@@ -164,11 +165,11 @@ public:
 
 
 
-    BLRect calculate_bounding_box_of_children();
+    c_rect calculate_bounding_box_of_children();
 
-    BLRect content_box;
+    c_rect content_box;
 
-    BLRect total_box;
+    c_rect total_box;
     inline void mark_as_dirty()
     {
         dirty = true;
@@ -226,8 +227,8 @@ public:
         _on_init = _callback;
     }
 
-    BLRectI box;
-    BLRect static_box;
+    c_rect box;
+    c_rect static_box;
 
   
 
@@ -239,7 +240,7 @@ public:
 
     std::function<void(c_node *item)> _click;
 
-    std::function<void(c_node *item, BLPointI mouse)> _mouse_move;
+    std::function<void(c_node *item, c_point mouse)> _mouse_move;
 
     std::function<void(c_node *item)> _mouse_enter;
     std::function<void(c_node *item)> _mouse_leave;
@@ -255,7 +256,7 @@ public:
     {
         _mouse_leave = _fn;
     }
-    inline void mouse_move(std::function<void(c_node *item, BLPointI mouse)> _fn, bool capture_all = false)
+    inline void mouse_move(std::function<void(c_node *item, c_point mouse)> _fn, bool capture_all = false)
     {
         _mouse_move = _fn;
     }

@@ -14,12 +14,11 @@
 #include <iostream>
 #include <algorithm>
 
-c_app_context::c_app_context(int width, int height)
+c_app_context::c_app_context(c_render_context* render_context, int width, int height)
 {
+    this->_render_context = std::move(render_context);
     this->width = width;
     this->height = height;
-    texture = BLImage(width, height, BL_FORMAT_PRGB32);
-    image_buffer.resize(width * height * 4);
 }
 c_app_context::~c_app_context()
 {
@@ -310,40 +309,40 @@ bool c_app_context::render()
     {
         YGNodeCalculateLayout((YGNodeRef)root->getRef(), width, height, YGDirectionLTR);
 
-        BLPointI point = BLPointI(YGNodeLayoutGetLeft((YGNodeRef)root->getRef()), YGNodeLayoutGetTop((YGNodeRef)root->getRef()));
+        c_point point = c_point(YGNodeLayoutGetLeft((YGNodeRef)root->getRef()), YGNodeLayoutGetTop((YGNodeRef)root->getRef()));
 
         root->layout_update(point);
     }
 
-    BLContext context(texture);
+    // BLContext context(texture);
 
-    context.clearAll();
+    //context.clearAll();
 
-    if (scale_factor > 1.f) {
-        context.setTransform(BLMatrix2D::makeScaling(scale_factor));
-        context.userToMeta();
-    }
+    // if (scale_factor > 1.f) {
+    //     context.setTransform(BLMatrix2D::makeScaling(scale_factor));
+    //     context.userToMeta();
+    // }
 
-    root->render(context);
+    root->render(*_render_context);
 
 
 
     for(auto& node : _nodes) {
         if (node->style().get_z_index() > 0)
-             node->render(context);
+             node->render(*_render_context);
     }
 
 
-    context.end();
+    //context.end();
 
 
 
-    BLImageData data;
-    texture.getData(&data);
+    // BLImageData data;
+    // texture.getData(&data);
 
 
 
-    memcpy(image_buffer.data(), data.pixelData, image_buffer.size());
+    // memcpy(image_buffer.data(), data.pixelData, image_buffer.size());
     root->dirty = false;
 
     return true;

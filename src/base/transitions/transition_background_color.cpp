@@ -27,13 +27,13 @@ void c_transition_background_color::run()
     auto &color = node->_style->_background_color;
 
     if (new_color.getR() != old_color.getR())
-        color.setR(std::lerp(old_color.getR(), new_color.getR(), progress));
+        color.setR(lerp(old_color.getR(), new_color.getR(), progress));
     if (new_color.getG() != old_color.getG())
-        color.setG(std::lerp(old_color.getG(), new_color.getG(), progress));
+        color.setG(lerp(old_color.getG(), new_color.getG(), progress));
     if (new_color.getB() != old_color.getB())
-        color.setB(std::lerp(old_color.getB(), new_color.getB(), progress));
+        color.setB(lerp(old_color.getB(), new_color.getB(), progress));
     if (new_color.getA() != old_color.getA())
-        color.setA(std::lerp(old_color.getA(), new_color.getA(), progress));
+        color.setA(lerp(old_color.getA(), new_color.getA(), progress));
 
     node->dirty = true;
 }

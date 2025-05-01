@@ -1,12 +1,13 @@
 #pragma once
-#include <blend2d.h>
+#include <iostream>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 class c_font_face
 {
 public:
-    BLFontFace _face;
+    // BLFontFace _face;
 
     c_font_face();
     c_font_face(std::vector<uint8_t> &buffer);
@@ -15,5 +16,5 @@ public:
     void from_file(std::string filepath);
     void from_memory(std::vector<uint8_t> &buffer);
 
-    inline BLFontFace &get() { return _face; }
+    // inline BLFontFace &get() { return _face; }
 };

@@ -13,7 +13,7 @@ public:
 
     ~c_text();
 
-    void render(BLContext &context) override;
+    void render(c_render_context &context) override;
 
     inline void set_font(c_font* font) { this->_font = font; }
 

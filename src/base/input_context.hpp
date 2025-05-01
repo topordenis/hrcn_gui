@@ -1,5 +1,5 @@
 #pragma once
-#include <blend2d.h>
+
 #include <mutex>
 #include <deque>
 
@@ -8,7 +8,7 @@ class c_input_context {
 public:
     c_input_context();
 
-    BLPointI cursor;
+    c_point cursor{0.f, 0.f};
 
 
 

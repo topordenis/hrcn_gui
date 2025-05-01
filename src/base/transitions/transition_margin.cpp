@@ -3,7 +3,7 @@
 
 #include <base/transitions/types.hpp>
 #include <base/yg_enums.hpp>
-
+#include <cmath>
 c_transition_margin::c_transition_margin(c_node *node, e_edge edge, float new_value, int milliseconds) : c_transition(node, milliseconds)
 {
          type = e_transition_type::margin;
@@ -19,7 +19,7 @@ void c_transition_margin::run()
 {
     c_transition::run();
     //  std::cout << "c_transition_position << progress   " << progress << std::endl;
-    auto value = std::lerp(old_value, new_value, 1.f - std::cos((progress * 3.14f) * 0.5f));
+    auto value = lerp(old_value, new_value, 1.f - cos((progress * 3.14f) * 0.5f));
 
     YGNodeStyleSetMargin((YGNodeRef)node->getRef(), (YGEdge)_edge, value);
     node->mark_layout_as_dirty();

@@ -2,11 +2,12 @@
 #include <deque>
 #include <vector>
 #include <functional>
-#include <blend2d.h>
+
 
 #include <mutex>
 
 #include "node.hpp"
+
 #include "style/style_manager.hpp"
 #include <utils/fnvhash.hpp>
 class c_transition;
@@ -22,13 +23,15 @@ enum class e_position : uint8_t;
 class c_app_context
 {
 public:
-    c_app_context(int width, int height);
+    c_app_context(c_render_context* render_context,int width, int height);
 
     int width = 0;
     int height = 0;
 
     float scale_factor = 1.f;
 
+    c_render_context* _render_context;
+    
     ~c_app_context();
 
     std::vector<c_transition *> _transitions;
@@ -81,7 +84,7 @@ public:
     void mark_context_dirty() {
         dirty_context = true;
     }
-    BLImage texture;
+
     std::vector<uint8_t> image_buffer;
     std::vector<uint8_t>& get_image_buffer();
     bool render();

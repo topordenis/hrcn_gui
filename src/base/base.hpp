@@ -4,8 +4,9 @@
 
 #ifndef BASE_HPP
 #define BASE_HPP
+#include <base/point.hpp>
+#include <base/rect.hpp>
 #include <base/secure_string.hpp>
-#include <blend2d.h>
 #include <base/style/style_manager.hpp>
 #include <base/transitions/transitions_manager.hpp>
 #include <base/transitions/transition_margin.hpp>
@@ -14,6 +15,7 @@
 #include <base/events/types.hpp>
 #include <base/node.hpp>
 #include <base/yg_enums.hpp>
+
 #include <base/state.hpp>
 #include <base/effect.hpp>
 
